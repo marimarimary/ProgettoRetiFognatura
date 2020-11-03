@@ -22,13 +22,13 @@ def prop2plot(dataFrame, Property, Ranges = [.2,.4,.6,.8,1.0] , FS=1,
     df = dataFrame
     pr = dataFrame[Property]
     delta = max(pr) - min(pr)
-    
+
     a = min(pr) + delta * Ranges[0]
     b = min(pr) + delta * Ranges[1]
     c = min(pr) + delta * Ranges[2]
     d = min(pr) + delta * Ranges[3]
     e = min(pr) + delta * Ranges[4]
-    
+
     if ColorPalette == 'red_gradient':
         df['draw_color'] = pr.apply(sg.gradient_grey_red, xmin = min(pr), xmax = max(pr)) # gradient grey-> red
     else:
@@ -44,7 +44,7 @@ def prop2plot(dataFrame, Property, Ranges = [.2,.4,.6,.8,1.0] , FS=1,
         df.loc[pr >= c, 'draw_color'] = ColorPalette[3] #verde
         df.loc[pr >= d, 'draw_color'] = ColorPalette[4] #giiallo
         df.loc[pr >= d, 'draw_color'] = ColorPalette[5] #red
-    
+
     #df['draw_size'] = pr * FS
     df['draw_size'] = 1 * FS
     df.loc[pr >= a, 'draw_size'] = 2 * FS
@@ -52,10 +52,9 @@ def prop2plot(dataFrame, Property, Ranges = [.2,.4,.6,.8,1.0] , FS=1,
     df.loc[pr >= c, 'draw_size'] = 4 * FS
     df.loc[pr >= d, 'draw_size'] = 5 * FS
     df.loc[pr >= e, 'draw_size'] = 5 * FS
-    
+
     if create_legend: 
-        txt_legend = [min(pr),a,b,c,d,e]
-        return(txt_legend)
+        return [min(pr),a,b,c,d,e]
 
 ## Plot dell'analisi della rete
 def plotModel(inpfilepath, title, annotation, 
@@ -236,7 +235,7 @@ def LinkTimeFrame(node, timeend):
     # crea un dataframe 
     df = pd.DataFrame(columns=['Date', 'Time', 'Flow', 
                                'Velocity', 'Depth', 'Capacity'])
-    for time in range(0,timeend):
+    for time in range(timeend):
         delta = DT.timedelta(hours=0, minutes = time, seconds=0)
         total_seconds = delta.total_seconds()
         hours = int(total_seconds // 3600)
@@ -308,10 +307,9 @@ def PropCond(Conduit, Nodes, Conds, Dividers):
 def D_opt(Q,Ks,i,Teta):
     # funzione di dimensionamento ottimale di una condotta
     b = 10 ** (-9/8) # coefficente per la conversione delle unità di misura
-    Dopt = b * ( 2 ** (13/3) * Qmax / Ks / (i ** .5) *   \
+    return b * ( 2 ** (13/3) * Qmax / Ks / (i ** .5) *   \
             (1 - math.sin(Teta) / Teta) ** (-2/3) * \
             (Teta - math.sin(Teta)) ** -1 ) ** (3/8)
-    return(Dopt)
     
     
 def Cp(d,H):
@@ -342,9 +340,7 @@ def Cm(h):
     # h profondità pozzetti in m
     
     h = h / .3048
-    Cm = 250 + h ** 2
-    
-    return(Cm)
+    return 250 + h ** 2
 
 def rStar(n):
     # calcolo di r con il metodo iterativo di Newton-Rapshon
